@@ -1,6 +1,6 @@
 /*!
-    \file  gd32f4xx_it.h
-    \brief the header file of the ISR
+    \file  usbh_ctrl.h
+    \brief header file for usbh_ctrl.c
 
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
@@ -35,53 +35,37 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-#ifndef GD32F4XX_IT_H
-#define GD32F4XX_IT_H
+#ifndef USBH_CTRL_H
+#define USBH_CTRL_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#include "usbh_core.h"
+#include "usbh_usr.h"
 
-#include "usb_conf.h"
+#define CTRL_HANDLE_TABLE_SIZE   13U    /*!< the ctrl handle table size define */
+
+extern state_table_struct        ctrl_handle_table[CTRL_HANDLE_TABLE_SIZE];
+extern uint8_t                   ctrl_polling_handle_flag;
+
+/* the enum of CTRL event */
+typedef enum 
+{
+    CTRL_EVENT_IDLE = 0,   /* the ctrl idle event */
+    CTRL_EVENT_SETUP,      /* the ctrl setup event */
+    CTRL_EVENT_DATA,       /* the ctrl data event */
+    CTRL_EVENT_STATUS,     /* the ctrl status event */
+    CTRL_EVENT_COMPLETE,   /* the ctrl complete event */
+    CTRL_EVENT_ERROR,      /* the ctrl error event */
+    CTRL_EVENT_STALLED,    /* the ctrl stalled event */
+}ctrl_event_enum;
 
 /* function declarations */
-/* NMI handle function */
-void NMI_Handler(void);
-/* HardFault handle function */
-void HardFault_Handler(void);
-/* MemManage handle function */
-void MemManage_Handler(void);
-/* BusFault handle function */
-void BusFault_Handler(void);
-/* UsageFault handle function */
-void UsageFault_Handler(void);
-/* SVC handle function */
-void SVC_Handler(void);
-/* DebugMon handle function */
-void DebugMon_Handler(void);
-/* PendSV handle function */
-void PendSV_Handler(void);
-/* SysTick handle function */
-void SysTick_Handler(void);
-/* this function handles EXTI5_9_IRQ Handler */
-void EXTI5_9_IRQHandler(void);
-/* this function handles USB wakeup interrupt handler */
-void USBHS_WKUP_IRQHandler(void);
-/* this function handles USBHS IRQ Handler */
-void USBHS_IRQHandler(void);
+/* the polling function of control transfer state handle */
+usbh_status_enum ctrl_state_polling_fun (usb_core_handle_struct *pudev, usbh_host_struct *puhost, void *pustate);
+/* send datas from the host channel */
+usbh_status_enum usbh_xfer (usb_core_handle_struct *pudev, uint8_t *buf, uint8_t  hc_num, uint16_t len);
+/* send the setup packet to the device */
+usbh_status_enum usbh_ctltx_setup (usb_core_handle_struct *pudev, uint8_t *buf, uint8_t  hc_num);
+/* this function prepare a hc and start a transfer */
+uint32_t  hcd_submit_request (usb_core_handle_struct *pudev, uint8_t channel_num);
 
-#ifdef USBHS_DEDICATED_EP1_ENABLED
-
-/* dedicated IN endpoint1 ISR handler */
-void USBHS_EP1_In_IRQHandler(void);
-/* dedicated OUT endpoint1 ISR handler */
-void USBHS_EP1_Out_IRQHandler(void);
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* GD32F4XX_IT_H */
-
+#endif /* USBH_CTRL_H */

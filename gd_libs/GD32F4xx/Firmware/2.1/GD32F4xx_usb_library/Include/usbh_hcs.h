@@ -1,6 +1,6 @@
 /*!
-    \file  gd32f4xx_it.h
-    \brief the header file of the ISR
+    \file  usbh_hcs.h
+    \brief header file for usbh_hcs.c
 
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
@@ -35,53 +35,38 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-#ifndef GD32F4XX_IT_H
-#define GD32F4XX_IT_H
+#ifndef USBH_HCS_H
+#define USBH_HCS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#include "usbh_core.h"
 
-#include "usb_conf.h"
+#define HC_MAX                  8U
+
+#define HC_OK                   0x0000U
+#define HC_USED                 0x8000U
+#define HC_ERROR                0xFFFFU
+#define HC_USED_MASK            0x7FFFU
 
 /* function declarations */
-/* NMI handle function */
-void NMI_Handler(void);
-/* HardFault handle function */
-void HardFault_Handler(void);
-/* MemManage handle function */
-void MemManage_Handler(void);
-/* BusFault handle function */
-void BusFault_Handler(void);
-/* UsageFault handle function */
-void UsageFault_Handler(void);
-/* SVC handle function */
-void SVC_Handler(void);
-/* DebugMon handle function */
-void DebugMon_Handler(void);
-/* PendSV handle function */
-void PendSV_Handler(void);
-/* SysTick handle function */
-void SysTick_Handler(void);
-/* this function handles EXTI5_9_IRQ Handler */
-void EXTI5_9_IRQHandler(void);
-/* this function handles USB wakeup interrupt handler */
-void USBHS_WKUP_IRQHandler(void);
-/* this function handles USBHS IRQ Handler */
-void USBHS_IRQHandler(void);
+/* allocate a new channel for the pipe */
+uint8_t usbh_channel_alloc (usb_core_handle_struct *pudev, uint8_t ep_addr);
+/* free all usb host channel */
+uint8_t usbh_allchannel_dealloc (usb_core_handle_struct *pudev);
+/* free the usb host channel */
+uint8_t usbh_channel_free (usb_core_handle_struct *pudev, uint8_t index);
+/* open a channel */
+uint8_t usbh_channel_open (usb_core_handle_struct *pudev, 
+                           uint8_t  channel_num,
+                           uint8_t  dev_addr,
+                           uint8_t  dev_speed,
+                           uint8_t  ep_type,
+                           uint16_t ep_mps);
+/* modify a channel */
+uint8_t usbh_channel_modify (usb_core_handle_struct *pudev,
+                             uint8_t  channel_num,
+                             uint8_t  dev_addr,
+                             uint8_t  dev_speed,
+                             uint8_t  ep_type,
+                             uint16_t ep_mps);
 
-#ifdef USBHS_DEDICATED_EP1_ENABLED
-
-/* dedicated IN endpoint1 ISR handler */
-void USBHS_EP1_In_IRQHandler(void);
-/* dedicated OUT endpoint1 ISR handler */
-void USBHS_EP1_Out_IRQHandler(void);
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* GD32F4XX_IT_H */
-
+#endif /* USBH_HCS_H */

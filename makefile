@@ -11,14 +11,15 @@ export OBJCOPY        = arm-none-eabi-objcopy
 TOP=$(shell pwd)
 
 #设定包含文件目录
-INC_FLAGS= -I $(TOP)/gd_libs/GD32F4xx/Firmware/CMSIS  \
-           -I $(TOP)/gd_libs/GD32F4xx/Firmware/CMSIS/GD/GD32F4xx/Include  \
-           -I $(TOP)/gd_libs/GD32F4xx/Firmware/GD32F4xx_standard_peripheral/Include  \
+INC_FLAGS= -I $(TOP)/gd_libs/GD32F4xx/Firmware/3.0/CMSIS  \
+           -I $(TOP)/gd_libs/GD32F4xx/Firmware/3.0/CMSIS/GD/GD32F4xx/Include  \
+           -I $(TOP)/gd_libs/GD32F4xx/Firmware/3.0/GD32F4xx_standard_peripheral/Include  \
            -I $(TOP)/inc  \
+		   -I $(TOP)/gd_libs/GD32F4xx/Firmware/2.1/GD32F4xx_usb_library/Include
 
 CFLAGS +=  -W -Wall -mcpu=cortex-m4 -mthumb
 CFLAGS +=  -ffunction-sections -fdata-sections
-CFLAGS +=  -D GD32F427 -D USE_STDPERIPH_DRIVER
+CFLAGS +=  -D GD32F427 -D USE_STDPERIPH_DRIVER -D USE_USBFS
 CFLAGS +=   $(INC_FLAGS) -Os -g -std=gnu11
 
 ASMFLAGS = -mthumb -mcpu=cortex-m4 -g -Wa,--warn 
@@ -29,13 +30,14 @@ LDFLAGS += -Wl,--start-group -lc -lm -Wl,--end-group -specs=nosys.specs -static 
 LD_PATH = -T $(TOP)/ldscripts/gd32f425_427_xK_flash.ld
 
 C_SRC=$(shell find ./src -name '*.c')  
-C_SRC+=$(shell find ./gd_libs/GD32F4xx/Firmware/GD32F4xx_standard_peripheral -name '*.c')  
-C_SRC+=$(shell find ./gd_libs/GD32F4xx/Firmware/CMSIS -name '*.c')  
+C_SRC+=$(shell find ./gd_libs/GD32F4xx/Firmware/3.0/GD32F4xx_standard_peripheral -name '*.c')  
+C_SRC+=$(shell find ./gd_libs/GD32F4xx/Firmware/3.0/CMSIS -name '*.c')  
+C_SRC+=$(shell find ./gd_libs/GD32F4xx/Firmware/2.1/GD32F4xx_usb_library/Source/device -name '*.c')  
 C_OBJ=$(C_SRC:%.c=%.o)          
 
 
 
-ASM_SRC=$(TOP)/gd_libs/GD32F4xx/Firmware/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f407_427.s 
+ASM_SRC=$(TOP)/gd_libs/GD32F4xx/Firmware/3.0/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f407_427.s 
 ASM_OBJ=$(ASM_SRC:%.s=%.o)  
 
 .PHONY: all clean update      

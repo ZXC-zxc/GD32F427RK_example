@@ -1,6 +1,6 @@
 /*!
-    \file  gd32f4xx_it.h
-    \brief the header file of the ISR
+    \file    gd32f4xx_crc.h
+    \brief   definitions for the CRC
 
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
@@ -35,53 +35,47 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-#ifndef GD32F4XX_IT_H
-#define GD32F4XX_IT_H
+#ifndef GD32F4XX_CRC_H
+#define GD32F4XX_CRC_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#include "gd32f4xx.h"
 
-#include "usb_conf.h"
+/* CRC definitions */
+#define CRC                            CRC_BASE
+
+/* registers definitions */
+#define CRC_DATA                       REG32(CRC + 0x00U)              /*!< CRC data register */
+#define CRC_FDATA                      REG32(CRC + 0x04U)              /*!< CRC free data register */
+#define CRC_CTL                        REG32(CRC + 0x08U)              /*!< CRC control register */
+
+/* bits definitions */
+/* CRC_DATA */
+#define CRC_DATA_DATA                  BITS(0,31)                      /*!< CRC calculation result bits */
+
+/* CRC_FDATA */
+#define CRC_FDATA_FDATA                BITS(0,7)                       /*!< CRC free data bits */
+
+/* CRC_CTL */
+#define CRC_CTL_RST                    BIT(0)                          /*!< CRC reset CRC_DATA register bit */
+
 
 /* function declarations */
-/* NMI handle function */
-void NMI_Handler(void);
-/* HardFault handle function */
-void HardFault_Handler(void);
-/* MemManage handle function */
-void MemManage_Handler(void);
-/* BusFault handle function */
-void BusFault_Handler(void);
-/* UsageFault handle function */
-void UsageFault_Handler(void);
-/* SVC handle function */
-void SVC_Handler(void);
-/* DebugMon handle function */
-void DebugMon_Handler(void);
-/* PendSV handle function */
-void PendSV_Handler(void);
-/* SysTick handle function */
-void SysTick_Handler(void);
-/* this function handles EXTI5_9_IRQ Handler */
-void EXTI5_9_IRQHandler(void);
-/* this function handles USB wakeup interrupt handler */
-void USBHS_WKUP_IRQHandler(void);
-/* this function handles USBHS IRQ Handler */
-void USBHS_IRQHandler(void);
+/* deinit CRC calculation unit */
+void crc_deinit(void);
 
-#ifdef USBHS_DEDICATED_EP1_ENABLED
+/* reset data register(CRC_DATA) to the value of 0xFFFFFFFF */
+void crc_data_register_reset(void);
+/* read the value of the data register */
+uint32_t crc_data_register_read(void);
 
-/* dedicated IN endpoint1 ISR handler */
-void USBHS_EP1_In_IRQHandler(void);
-/* dedicated OUT endpoint1 ISR handler */
-void USBHS_EP1_Out_IRQHandler(void);
+/* read the value of the free data register */
+uint8_t crc_free_data_register_read(void);
+/* write data to the free data register */
+void crc_free_data_register_write(uint8_t free_data);
 
-#endif
+/* calculate the CRC value of a 32-bit data */
+uint32_t crc_single_data_calculate(uint32_t sdata);
+/* calculate the CRC value of an array of 32-bit values */
+uint32_t crc_block_data_calculate(uint32_t array[], uint32_t size);
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* GD32F4XX_IT_H */
-
+#endif /* GD32F4XX_CRC_H */

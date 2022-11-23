@@ -1,6 +1,7 @@
 /*!
-    \file  gd32f4xx_it.h
-    \brief the header file of the ISR
+    \file  usbd_conf.h
+    \brief USBFS device-mode configuration header file
+    
 
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
@@ -35,53 +36,33 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-#ifndef GD32F4XX_IT_H
-#define GD32F4XX_IT_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#ifndef USBD_CONF_H
+#define USBD_CONF_H
 
 #include "usb_conf.h"
 
-/* function declarations */
-/* NMI handle function */
-void NMI_Handler(void);
-/* HardFault handle function */
-void HardFault_Handler(void);
-/* MemManage handle function */
-void MemManage_Handler(void);
-/* BusFault handle function */
-void BusFault_Handler(void);
-/* UsageFault handle function */
-void UsageFault_Handler(void);
-/* SVC handle function */
-void SVC_Handler(void);
-/* DebugMon handle function */
-void DebugMon_Handler(void);
-/* PendSV handle function */
-void PendSV_Handler(void);
-/* SysTick handle function */
-void SysTick_Handler(void);
-/* this function handles EXTI5_9_IRQ Handler */
-void EXTI5_9_IRQHandler(void);
-/* this function handles USB wakeup interrupt handler */
-void USBHS_WKUP_IRQHandler(void);
-/* this function handles USBHS IRQ Handler */
-void USBHS_IRQHandler(void);
+#define USBD_CFG_MAX_NUM                   1U
+#define USBD_ITF_MAX_NUM                   2U
+#define USB_STR_DESC_MAX_SIZE              64U
 
-#ifdef USBHS_DEDICATED_EP1_ENABLED
+/* USB feature -- Self Powered */
+#define USBD_SELF_POWERED
 
-/* dedicated IN endpoint1 ISR handler */
-void USBHS_EP1_In_IRQHandler(void);
-/* dedicated OUT endpoint1 ISR handler */
-void USBHS_EP1_Out_IRQHandler(void);
+#define USB_STRING_COUNT                   4
 
-#endif
+/* class layer parameter used by the CDC ACM device */
+#define CDC_ACM_CMD_EP                     EP2_IN
+#define CDC_ACM_DATA_IN_EP                 EP1_IN
+#define CDC_ACM_DATA_OUT_EP                EP1_OUT
 
-#ifdef __cplusplus
-}
-#endif
+#define CDC_ACM_CMD_PACKET_SIZE            8
+#define CDC_ACM_DATA_PACKET_SIZE           64
 
-#endif /* GD32F4XX_IT_H */
+/* class layer parameter used by the Custom HID device */
+#define CUSTOMHID_IN_EP                    EP3_IN
+#define CUSTOMHID_OUT_EP                   EP3_OUT
 
+#define CUSTOMHID_IN_PACKET                2
+#define CUSTOMHID_OUT_PACKET               2
+
+#endif /* USBD_CONF_H */

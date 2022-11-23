@@ -1,6 +1,6 @@
 /*!
-    \file  gd32f4xx_it.h
-    \brief the header file of the ISR
+    \file  usbd_int.h
+    \brief USB device-mode interrupt handler header file
 
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
@@ -35,53 +35,30 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-#ifndef GD32F4XX_IT_H
-#define GD32F4XX_IT_H
+#ifndef USBD_INT_H
+#define USBD_INT_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif 
+#include "usbd_core.h"
 
-#include "usb_conf.h"
+typedef struct
+{
+    uint8_t (*SOF) (usb_core_handle_struct *pudev);
+}usbd_int_cb_struct;
+
+extern usbd_int_cb_struct *usbd_int_fops;
 
 /* function declarations */
-/* NMI handle function */
-void NMI_Handler(void);
-/* HardFault handle function */
-void HardFault_Handler(void);
-/* MemManage handle function */
-void MemManage_Handler(void);
-/* BusFault handle function */
-void BusFault_Handler(void);
-/* UsageFault handle function */
-void UsageFault_Handler(void);
-/* SVC handle function */
-void SVC_Handler(void);
-/* DebugMon handle function */
-void DebugMon_Handler(void);
-/* PendSV handle function */
-void PendSV_Handler(void);
-/* SysTick handle function */
-void SysTick_Handler(void);
-/* this function handles EXTI5_9_IRQ Handler */
-void EXTI5_9_IRQHandler(void);
-/* this function handles USB wakeup interrupt handler */
-void USBHS_WKUP_IRQHandler(void);
-/* this function handles USBHS IRQ Handler */
-void USBHS_IRQHandler(void);
+/* USB device-mode interrupts global service routine handler */
+uint32_t usbd_isr (usb_core_handle_struct *pudev);
 
 #ifdef USBHS_DEDICATED_EP1_ENABLED
 
-/* dedicated IN endpoint1 ISR handler */
-void USBHS_EP1_In_IRQHandler(void);
-/* dedicated OUT endpoint1 ISR handler */
-void USBHS_EP1_Out_IRQHandler(void);
+/* USB dedicated OUT endpoint 1 interrupt service routine handler */
+uint32_t USBD_EP1OUT_ISR_Handler (usb_core_handle_struct *pudev);
+/* USB dedicated IN endpoint 1 interrupt service routine handler */
+uint32_t USBD_EP1IN_ISR_Handler (usb_core_handle_struct *pudev);
 
-#endif
+#endif /* USBHS_DEDICATED_EP1_ENABLED */
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* GD32F4XX_IT_H */
+#endif /* USBD_INT_H */
 

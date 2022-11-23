@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.axc": "python",
+        "rcc.h": "c",
+        "gd32f427r_start.h": "c",
+        "gd32f4xx_libopt.h": "c",
+        "gd32f4xx_gpio.h": "c",
+        "gd32f4xx_syscfg.h": "c"
+    }
+}
